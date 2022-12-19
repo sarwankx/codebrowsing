@@ -10,6 +10,7 @@
 # if already exists, set its child to that selector component name.
 # also search class name for each component.
 # check if this component is opened as dialog in any other components.
+#
 import os
 import re
 """ directoryName = "C:\\work\\code\\vantage-lake\\janus\\apps\\data-sharing" """
