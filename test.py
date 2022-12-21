@@ -20,7 +20,7 @@ searchstring = "selector"
 allNodes = []
 
 class Tree:
-    def __init__(self, componentName, selectorName,componentClassName,dialogs):
+    def __init__(self, componentName, selectorName,componentClassName,dialogs,inputs,outputs):
         self.children = []
         self.htmlFileName = componentName + ".html"
         self.tsFileName = componentName + ".ts"
@@ -28,6 +28,8 @@ class Tree:
         self.selectorName = selectorName
         self.componentClassName = componentClassName
         self.dialogs = dialogs
+        self.inputs = inputs
+        self.outputs = outputs
         self.parent = False
 
 # root = Tree("app.component","data-sharing-root","AppComponent")
@@ -82,15 +84,10 @@ def searchWordInDirectory(searchstring,directoryName):
                 textfile = open(fullFilePath, 'r')
                 filetext = textfile.read()
                 textfile.close()
-                inputMatches = re.findall("@Input\(\).*", filetext)
-                outputMatches = re.findall("@Output\(\).*", filetext)
-                print("inputMatches = ",inputMatches)
-                print("outputMatches = ",outputMatches)
+                inputs = re.findall("@Input\(\).*", filetext)
+                outputs = re.findall("@Output\(\).*", filetext)
                 
-                print(inputs,outputs)
-                   
-                
-                node = Tree(componentName,selectorName,componentClassName,dialogComponent)
+                node = Tree(componentName,selectorName,componentClassName,dialogComponent,inputs,outputs)
                 allNodes.append(node)
                     
                 f.close()
@@ -108,6 +105,7 @@ def printAllChildren(node,level):
     if node.dialogs!='':
         print(node.componentClassName,end="")
         print("  ===>  DialogComponent ===> ",node.dialogs)
+    
     else:
         print(node.componentClassName)
        
