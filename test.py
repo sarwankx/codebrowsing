@@ -39,16 +39,21 @@ def searchWordInDirectory(searchstring,directoryName):
     """ matches one or more spaces between export and class"""
     componentNamePattern = re.compile(r"export(\s)*class(\s)*(.*)Component") 
     dialogPattern = re.compile(r"\.open((.*)Component)")
+    inputPattern = re.compile("Input")
+    outputPattern = re.compile(r"@Output().*")
     for fname in directory:
         if os.path.isfile(directoryName + os.sep + fname):
             # Full path
             if(fname.endswith("component.ts")):
                 """ print(fname) """
-                f = open(directoryName + os.sep + fname, 'r')
+                fullFilePath = directoryName + os.sep + fname
+                f = open(fullFilePath, 'r')
                 componentName = ''
                 selectorName = ''
                 componentClassName = ''
                 dialogComponent = ''
+                inputs = []
+                outputs = []
                 
                 for i, line in enumerate(f):
                     
@@ -74,6 +79,16 @@ def searchWordInDirectory(searchstring,directoryName):
                         print('dialogComponent = ',dialogComponent)
                     if dialogComponent!='':
                         break
+                textfile = open(fullFilePath, 'r')
+                filetext = textfile.read()
+                textfile.close()
+                inputMatches = re.findall("@Input\(\).*", filetext)
+                outputMatches = re.findall("@Output\(\).*", filetext)
+                print("inputMatches = ",inputMatches)
+                print("outputMatches = ",outputMatches)
+                
+                print(inputs,outputs)
+                   
                 
                 node = Tree(componentName,selectorName,componentClassName,dialogComponent)
                 allNodes.append(node)
