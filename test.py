@@ -20,13 +20,14 @@ searchstring = "selector"
 allNodes = []
 
 class Tree:
-    def __init__(self, componentName, selectorName,componentClassName):
+    def __init__(self, componentName, selectorName,componentClassName,dialogs):
         self.children = []
         self.htmlFileName = componentName + ".html"
         self.tsFileName = componentName + ".ts"
         self.cssFileName = componentName + ".scss"
         self.selectorName = selectorName
         self.componentClassName = componentClassName
+        self.dialogs = dialogs
         self.parent = False
 
 # root = Tree("app.component","data-sharing-root","AppComponent")
@@ -37,6 +38,7 @@ def searchWordInDirectory(searchstring,directoryName):
     selectorPattern = re.compile(r"selector:( *)'(.*)'")
     """ matches one or more spaces between export and class"""
     componentNamePattern = re.compile(r"export(\s)*class(\s)*(.*)Component") 
+    dialogPattern = re.compile(r"\.open((.*)Component)")
     for fname in directory:
         if os.path.isfile(directoryName + os.sep + fname):
             # Full path
@@ -46,6 +48,7 @@ def searchWordInDirectory(searchstring,directoryName):
                 componentName = ''
                 selectorName = ''
                 componentClassName = ''
+                dialogComponent = ''
                 
                 for i, line in enumerate(f):
                     
@@ -63,8 +66,21 @@ def searchWordInDirectory(searchstring,directoryName):
                         componentClassName = word[word.rindex(" ")+1:len(word)]
                     if componentClassName!='':
                         break
+                for i, line in enumerate(f):  
+                    for match in re.finditer(componentNamePattern, line):
+                        word = match.group()
+                        componentClassName = word[word.rindex(" ")+1:len(word)]
+                    if componentClassName!='':
+                        break
+                for i, line in enumerate(f):  
+                    for match in re.finditer(dialogPattern, line):
+                        word = match.group()
+                        dialogComponent = word[word.index("(")+1:len(word)]
+                        print('dialogComponent = ',dialogComponent)
+                    if dialogComponent!='':
+                        break
                 
-                node = Tree(componentName,selectorName,componentClassName)
+                node = Tree(componentName,selectorName,componentClassName,dialogComponent)
                 allNodes.append(node)
                     
                 f.close()
@@ -79,7 +95,11 @@ def printAllNodes(nodeList):
 def printAllChildren(node,level):
     for i in range(level):
         print("    ",end="")
-    print(node.componentClassName)
+    if node.dialogs!='':
+        print(node.componentClassName,end="")
+        print("  ===>  DialogComponent ===> ",node.dialogs)
+    else:
+        print(node.componentClassName)
        
     for child in node.children:
         printAllChildren(child,level + 1)
