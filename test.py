@@ -52,7 +52,6 @@ def searchWordInDirectory(searchstring,directoryName):
                 
                 for i, line in enumerate(f):
                     
-                    componentClassName = ""
                     for match in re.finditer(selectorPattern, line):
                         word = match.group()
                         selectorName = word[word.index("'")+1:len(word)-1]
@@ -60,18 +59,14 @@ def searchWordInDirectory(searchstring,directoryName):
                         
                     if selectorName!='':
                         break
+                
                 for i, line in enumerate(f):  
                     for match in re.finditer(componentNamePattern, line):
                         word = match.group()
                         componentClassName = word[word.rindex(" ")+1:len(word)]
                     if componentClassName!='':
                         break
-                for i, line in enumerate(f):  
-                    for match in re.finditer(componentNamePattern, line):
-                        word = match.group()
-                        componentClassName = word[word.rindex(" ")+1:len(word)]
-                    if componentClassName!='':
-                        break
+                
                 for i, line in enumerate(f):  
                     for match in re.finditer(dialogPattern, line):
                         word = match.group()
