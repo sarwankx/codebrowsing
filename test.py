@@ -29,7 +29,7 @@ class Tree:
         self.componentClassName = componentClassName
         self.parent = False
 
-root = Tree("app.component","data-sharing-root","AppComponent")
+# root = Tree("app.component","data-sharing-root","AppComponent")
 """ root.children = [left, middle, right] """
 def searchWordInDirectory(searchstring,directoryName):
 
@@ -43,6 +43,10 @@ def searchWordInDirectory(searchstring,directoryName):
             if(fname.endswith("component.ts")):
                 """ print(fname) """
                 f = open(directoryName + os.sep + fname, 'r')
+                componentName = ''
+                selectorName = ''
+                componentClassName = ''
+                
                 for i, line in enumerate(f):
                     
                     componentClassName = ""
@@ -50,13 +54,18 @@ def searchWordInDirectory(searchstring,directoryName):
                         word = match.group()
                         selectorName = word[word.index("'")+1:len(word)-1]
                         componentName = fname[0:(len(fname)-3)]
-                        node = Tree(componentName,selectorName,componentClassName)
-                        allNodes.append(node)
-                       
-                    """ for match in re.finditer(componentNamePattern, line):
+                        
+                    if selectorName!='':
+                        break
+                for i, line in enumerate(f):  
+                    for match in re.finditer(componentNamePattern, line):
                         word = match.group()
-                        componentClassName = word[word.rindex(" ")+1:len(word)] """
-                   
+                        componentClassName = word[word.rindex(" ")+1:len(word)]
+                    if componentClassName!='':
+                        break
+                
+                node = Tree(componentName,selectorName,componentClassName)
+                allNodes.append(node)
                     
                 f.close()
         else:
@@ -70,7 +79,7 @@ def printAllNodes(nodeList):
 def printAllChildren(node,level):
     for i in range(level):
         print("    ",end="")
-    print(node.selectorName)
+    print(node.componentClassName)
        
     for child in node.children:
         printAllChildren(child,level + 1)
@@ -78,7 +87,7 @@ def printAllChildren(node,level):
 
 
 def setChildren(childNode,htmlFileName):
-    print('setChildren called ',childNode,htmlFileName)
+    """  print('setChildren called ',childNode,htmlFileName) """
     for node in allNodes:
         if node.htmlFileName == htmlFileName:
             node.children.append(childNode)
@@ -89,7 +98,6 @@ def drawTreeMap(allNodes,dirName):
         if os.path.isfile(dirName + os.sep + fname):
             # Full path
             if(fname.endswith("component.html")):
-                print(fname)
                 with open(dirName + os.sep + fname, 'r') as f:
                     datafile = f.readlines()
                     for line in datafile:
