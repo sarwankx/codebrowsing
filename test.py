@@ -86,7 +86,8 @@ def searchWordInDirectory(searchstring,directoryName):
                 textfile.close()
                 inputs = re.findall("@Input\(\).*", filetext)
                 outputs = re.findall("@Output\(\).*", filetext)
-                
+                print("inputs",inputs)
+                print("outputs",outputs)
                 node = Tree(componentName,selectorName,componentClassName,dialogComponent,inputs,outputs)
                 allNodes.append(node)
                     
